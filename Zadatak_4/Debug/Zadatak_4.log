@@ -1,0 +1,5 @@
+﻿  Zad4.c
+C:\Users\vedro\source\repos\Zadatak_4\Zadatak_4\Zad4.c(48,12): warning C4098: 'ucitajIzDat': 'void' function returning a value
+C:\Users\vedro\source\repos\Zadatak_4\Zadatak_4\Zad4.c(116,15): warning C4098: 'zbrajanje': 'void' function returning a value
+C:\Users\vedro\source\repos\Zadatak_4\Zadatak_4\Zad4.c(127,15): warning C4098: 'zbrajanje': 'void' function returning a value
+  Zadatak_4.vcxproj -> C:\Users\vedro\source\repos\Zadatak_4\Debug\Zadatak_4.exe
