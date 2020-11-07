@@ -101,14 +101,23 @@ void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 				break;
 				
 			case 2:									//exp prvog veci, pr2 nije zadnji
+				suma->koef = pr2->koef;
+				suma->exp = pr2->exp;
 				pr2 = pr2->next;
+				suma = novaSuma(suma);
 				break;
 
 			case 3:									//exp drugog veci, pr1 nije zadnji
+				suma->koef = pr1->koef;
+				suma->exp = pr1->exp;
 				pr1 = pr1->next;
 				break;
 
 			case 4:									//exp prvog veci, pr2 zadnji
+				suma->koef = pr2->koef;
+				suma->exp = pr2->exp;
+				suma = novaSuma(suma);
+
 				while (pr1 != NULL) {
 					suma->koef = pr1->koef;
 					suma->exp = pr1->exp;
@@ -120,6 +129,10 @@ void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 				break;
 
 			case 5:									//exp drugog veci, pr1 zadnji
+				suma->koef = pr1->koef;
+				suma->exp = pr1->exp;
+				suma = novaSuma(suma);
+
 				while (pr2 != NULL) {
 					suma->koef = pr2->koef;
 					suma->exp = pr2->exp;
@@ -152,7 +165,7 @@ int provjera(Pozicija pr1, Pozicija pr2) {
 void ispis(Pozicija head) {
 	head = head->next;
 	while (head != NULL) {
-		printf("%dx^%d ", head->koef, head->exp);
+		printf("%dx^%d + ", head->koef, head->exp);
 		head = head->next;
 	}
 }
