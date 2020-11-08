@@ -14,23 +14,32 @@ void unesiSortirano(Pozicija, Pozicija);
 Pozicija noviBroj(int, int);
 void ucitajIzDat(char[50], Pozicija);
 void zbrajanje(Pozicija, Pozicija, Pozicija);
-int provjera(Pozicija, Pozicija);
+int provjeraZbrajanja(Pozicija, Pozicija);
 void ispis(Pozicija);
-Pozicija novaSuma(Pozicija);
+Pozicija noviRez(Pozicija);
+void mnozenje(Pozicija, Pozicija, Pozicija);
+
 
 int main() {
 
 	_pol head;
 	_pol first;
 	_pol rezZbr;
+	_pol rezMno;
 	head.next = NULL;
 	first.next = NULL;
 	rezZbr.next = NULL;
+	rezMno.next = NULL;
 
 	ucitajIzDat("Brojevi1.txt", &head);
 	ucitajIzDat("Brojevi2.txt", &first);
 	zbrajanje(&head, &first, &rezZbr);
 	ispis(&rezZbr);
+	mnozenje(&head, &first, &rezMno);
+
+	printf("%dx^%d\n", rezMno.next->koef, rezMno.next->exp);
+
+	return 0;
 	
 }
 
@@ -82,29 +91,32 @@ void unesiSortirano(Pozicija head, Pozicija br) {
 	head->next = br;
 
 }
+
+//popunjava clanove liste sume ovisno o exponentima svakog pribrojnika
+//------------------------------
 void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 	
 	pr1 = pr1->next;
 	pr2 = pr2->next;
-	suma = novaSuma(suma);
+	suma = noviRez(suma);
 
-	while (provjera(pr1, pr2)) {
+	while (provjeraZbrajanja(pr1, pr2)) {
 		
-		switch (provjera(pr1, pr2)) {
+		switch (provjeraZbrajanja(pr1, pr2)) {
 
 			case 1:									//isti exp
 				suma->koef = pr1->koef + pr2->koef;
 				suma->exp = pr1->exp;
 				pr1 = pr1->next;
 				pr2 = pr2->next;
-				suma = novaSuma(suma);
+				suma = noviRez(suma);
 				break;
 				
 			case 2:									//exp prvog veci, pr2 nije zadnji
 				suma->koef = pr2->koef;
 				suma->exp = pr2->exp;
 				pr2 = pr2->next;
-				suma = novaSuma(suma);
+				suma = noviRez(suma);
 				break;
 
 			case 3:									//exp drugog veci, pr1 nije zadnji
@@ -116,7 +128,7 @@ void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 			case 4:									//exp prvog veci, pr2 zadnji
 				suma->koef = pr2->koef;
 				suma->exp = pr2->exp;
-				suma = novaSuma(suma);
+				suma = noviRez(suma);
 
 				while (pr1 != NULL) {
 					suma->koef = pr1->koef;
@@ -124,14 +136,14 @@ void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 					if (pr1->next == NULL)
 						return 0;
 					pr1 = pr1->next;
-					suma = novaSuma(suma);
+					suma = noviRez(suma);
 				}
 				break;
 
 			case 5:									//exp drugog veci, pr1 zadnji
 				suma->koef = pr1->koef;
 				suma->exp = pr1->exp;
-				suma = novaSuma(suma);
+				suma = noviRez(suma);
 
 				while (pr2 != NULL) {
 					suma->koef = pr2->koef;
@@ -139,8 +151,11 @@ void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 					if (pr2->next == NULL)
 						return 0;
 					pr2 = pr2->next;
-					suma = novaSuma(suma);
+					suma = noviRez(suma);
 				}
+				break;
+			case -2:
+				printf("Greska pri provjeri pribrojnika.\n");
 				break;
 
 			default: 
@@ -150,18 +165,41 @@ void zbrajanje(Pozicija pr1, Pozicija pr2, Pozicija suma) {
 	}
 }
 
-int provjera(Pozicija pr1, Pozicija pr2) {
+//radi provjeru stanja izmedju prvog i drugog pribrojnika
+//------------------------------
+int provjeraZbrajanja(Pozicija pr1, Pozicija pr2) {
 	
 	if (pr1->exp == pr2->exp) { return 1; }
-	else if (pr1->exp > pr2->exp&& pr2->next != NULL) { return 2; }
+	else if (pr1->exp > pr2->exp && pr2->next != NULL) { return 2; }
 	else if (pr1->exp < pr2->exp && pr1->next != NULL) { return 3; }
-	else if (pr1->exp > pr2->exp&& pr2->next == NULL) { return 4; }
+	else if (pr1->exp > pr2->exp && pr2->next == NULL) { return 4; }
 	else if (pr1->exp < pr2->exp && pr1->next == NULL) { return 5; }
 	
 	else { return -2; }
 
 }
+//mnozi prijasnji umnozak sa svakim clanom
+//------------------------------
+void mnozenje(Pozicija fakt1, Pozicija fakt2, Pozicija umn) {
 
+	fakt1 = fakt1->next;
+	fakt2 = fakt2->next;
+	Pozicija pom = fakt2;
+	umn = noviRez(umn);
+
+	while (fakt1 != NULL) {
+		umn->koef = umn->koef + fakt1->koef + fakt2->koef;
+		umn->exp = umn->exp * fakt1->exp * fakt2->exp;
+		
+		if (fakt2->next == NULL) {
+			fakt1 = fakt1->next;
+			fakt2 = pom;
+		}
+	}
+}
+
+//ispisuje zavrsnu sumu
+//------------------------------
 void ispis(Pozicija head) {
 	head = head->next;
 	while (head != NULL) {
@@ -169,9 +207,12 @@ void ispis(Pozicija head) {
 		head = head->next;
 	}
 }
-Pozicija novaSuma(Pozicija suma) {
+
+//stvara novi clan u listi sume/umnoska i odma ga uclani u listu(sort nije bitan jer su pocetno 0 0)
+//------------------------------
+Pozicija noviRez(Pozicija rez) {
 	Pozicija pom = NULL;
-	pom = noviBroj(0, 0);
-	unesiSortirano(suma, pom);
+	pom = noviBroj(0, 1);
+	unesiSortirano(rez, pom);
 	return pom;
 }
